@@ -18,6 +18,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -45,6 +46,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.activity4.data.DataForm
 import com.example.activity4.data.DataSource.jenis
+import com.example.activity4.data.DataSource.status
+import com.example.activity4.data.dataST
 import com.example.activity4.ui.theme.Activity4Theme
 
 class MainActivity : ComponentActivity() {
@@ -103,17 +106,24 @@ fun TampilForm(cobaViewModel: CobaViewModel = viewModel()) {
     var almt by remember {
         mutableStateOf("")
     }
+    var em by remember {
+        mutableStateOf("")
+    }
 
     val context = LocalContext.current
     val dataform: DataForm
+    val sta : dataST
     val uiState by cobaViewModel.uiState.collectAsState()
+    val state by cobaViewModel.state.collectAsState()
     dataform = uiState
+    sta = state
 
-    Row (horizontalArrangement = Arrangement.Start, modifier = Modifier.fillMaxWidth()){
+    Row (horizontalArrangement = Arrangement.spacedBy(120.dp), modifier = Modifier.fillMaxWidth()){
         Image(painter = painterResource(R.drawable.arrow_back), contentDescription =" ")
-        Text(text = "Register",
+        Text(text = "Register", modifier = Modifier.align(alignment = Alignment.CenterVertically)
             )
     }
+    Divider()
 
     Text(text = "Create Your Account",
         fontWeight = FontWeight.Bold,
@@ -124,7 +134,7 @@ fun TampilForm(cobaViewModel: CobaViewModel = viewModel()) {
         singleLine = true,
         shape = MaterialTheme.shapes.large,
         modifier = Modifier.fillMaxWidth(),
-        label = { Text(text = "Nama Lengkap") },
+        label = { Text(text = "Username") },
         onValueChange = { textNama = it }
     )
     OutlinedTextField(value = textTlp,
@@ -135,12 +145,12 @@ fun TampilForm(cobaViewModel: CobaViewModel = viewModel()) {
         label = { Text(text = "Telepon") },
         onValueChange = { textTlp = it }
     )
-    OutlinedTextField(value = almt,
+    OutlinedTextField(value = em,
         singleLine = true,
         shape = MaterialTheme.shapes.large,
         modifier = Modifier.fillMaxWidth(),
-        label = { Text(text = "Alamat Rumah") },
-        onValueChange = { almt = it }
+        label = { Text(text = "Email") },
+        onValueChange = { em = it }
     )
     Column(horizontalAlignment = Alignment.Start, modifier = Modifier.fillMaxWidth()) {
         Text(text = "Jenis Kelamin")
@@ -148,15 +158,27 @@ fun TampilForm(cobaViewModel: CobaViewModel = viewModel()) {
             onSelectionChanged = { cobaViewModel.setJenisK(it) }
         )
     }
-
+    Column(horizontalAlignment = Alignment.Start, modifier = Modifier.fillMaxWidth()) {
+        Text(text = "Status")
+        SelectST(option = status.map { id -> context.resources.getString(id) },
+            onSelectionChanged = { cobaViewModel.setJenisK(it) }
+        )
+    }
+    OutlinedTextField(value = almt,
+        singleLine = true,
+        shape = MaterialTheme.shapes.large,
+        modifier = Modifier.fillMaxWidth(),
+        label = { Text(text = "Alamat ") },
+        onValueChange = { almt = it }
+    )
     Button(modifier = Modifier.fillMaxWidth(),
-        onClick = { cobaViewModel.insertData(textNama, textTlp, dataform.sex, almt) }) {
+        onClick = { cobaViewModel.insertData(textNama, textTlp, dataform.sex, almt,sta.st,em) }) {
         Text(
             text = stringResource(id = R.string.submit),
             fontSize = 16.sp
         )
     }
-    Spacer(modifier = Modifier.height(100.dp))
+    TampilHasil(status = cobaViewModel.status, email = cobaViewModel.email, jenisnya = cobaViewModel.jenisKl, alamatnya = cobaViewModel.alamat)
 
 }
 
@@ -166,11 +188,45 @@ fun SelectJK(
     option: List<String>,
     onSelectionChanged: (String) -> Unit = {}
 ) {
+    var selectedVal by rememberSaveable {
+        mutableStateOf("")
+    }
+    Row (modifier = Modifier
+        .fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
+        option.forEach { item ->
+            Row(
+                modifier = Modifier.selectable(
+                    selected = selectedVal == item,
+                    onClick = {
+                        selectedVal = item
+                        onSelectionChanged(item)
+                    }
+                ),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(selected = selectedVal == item,
+                    onClick = {
+                        selectedVal = item
+                        onSelectionChanged(item)
+                    }
+                )
+                Text(item)
+
+            }
+        }
+
+    }
+}
+
+@Composable
+fun SelectST(
+    option: List<String>,
+    onSelectionChanged: (String) -> Unit = {}
+) {
     var selectedValue by rememberSaveable {
         mutableStateOf("")
     }
     Row (modifier = Modifier
-        .padding(16.dp)
         .fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
         option.forEach { item ->
             Row(
