@@ -4,6 +4,7 @@ import android.graphics.Outline
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,7 +35,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -106,6 +109,17 @@ fun TampilForm(cobaViewModel: CobaViewModel = viewModel()) {
     val uiState by cobaViewModel.uiState.collectAsState()
     dataform = uiState
 
+    Row (horizontalArrangement = Arrangement.Start, modifier = Modifier.fillMaxWidth()){
+        Image(painter = painterResource(R.drawable.arrow_back), contentDescription =" ")
+        Text(text = "Register",
+            )
+    }
+
+    Text(text = "Create Your Account",
+        fontWeight = FontWeight.Bold,
+        fontSize =20.sp
+        )
+
     OutlinedTextField(value = textNama,
         singleLine = true,
         shape = MaterialTheme.shapes.large,
@@ -128,9 +142,13 @@ fun TampilForm(cobaViewModel: CobaViewModel = viewModel()) {
         label = { Text(text = "Alamat Rumah") },
         onValueChange = { almt = it }
     )
-    SelectJK(option = jenis.map { id -> context.resources.getString(id) },
-        onSelectionChanged = { cobaViewModel.setJenisK(it) }
-    )
+    Column(horizontalAlignment = Alignment.Start, modifier = Modifier.fillMaxWidth()) {
+        Text(text = "Jenis Kelamin")
+        SelectJK(option = jenis.map { id -> context.resources.getString(id) },
+            onSelectionChanged = { cobaViewModel.setJenisK(it) }
+        )
+    }
+
     Button(modifier = Modifier.fillMaxWidth(),
         onClick = { cobaViewModel.insertData(textNama, textTlp, dataform.sex, almt) }) {
         Text(
@@ -151,7 +169,9 @@ fun SelectJK(
     var selectedValue by rememberSaveable {
         mutableStateOf("")
     }
-    Row (modifier = Modifier.padding(16.dp)) {
+    Row (modifier = Modifier
+        .padding(16.dp)
+        .fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
         option.forEach { item ->
             Row(
                 modifier = Modifier.selectable(
