@@ -139,13 +139,7 @@ fun TampilForm(cobaViewModel: CobaViewModel = viewModel()) {
         )
     }
     Spacer(modifier = Modifier.height(100.dp))
-    TampilHasil(
-        namanya = cobaViewModel.namaUsr,
-        telponnya = cobaViewModel.noTlp,
-        jenisnya = cobaViewModel.jenisKl,
-        alamatnya = cobaViewModel.alamat
 
-    )
 }
 
 
@@ -157,7 +151,7 @@ fun SelectJK(
     var selectedValue by rememberSaveable {
         mutableStateOf("")
     }
-    Column(modifier = Modifier.padding(16.dp)) {
+    Row (modifier = Modifier.padding(16.dp)) {
         option.forEach { item ->
             Row(
                 modifier = Modifier.selectable(
@@ -184,7 +178,7 @@ fun SelectJK(
 }
 
 @Composable
-fun TampilHasil(namanya: String, telponnya: String, jenisnya: String, alamatnya:String) {
+fun TampilHasil(status: String, email: String, jenisnya: String, alamatnya:String) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
@@ -192,19 +186,19 @@ fun TampilHasil(namanya: String, telponnya: String, jenisnya: String, alamatnya:
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(
-            text = "Nama : " + namanya,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
-        )
-        Text(
-            text = "Telepon : " + telponnya,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
-        )
-        Text(
             text = "Jenis Kelamin : " + jenisnya,
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
         )
         Text(
+            text = "Status : " + status,
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+        )
+        Text(
             text = "Alamat : " + alamatnya,
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+        )
+        Text(
+            text = "Email : " + email,
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
         )
     }
